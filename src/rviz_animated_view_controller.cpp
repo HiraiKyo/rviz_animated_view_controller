@@ -180,6 +180,9 @@ void AnimatedViewController::initializePublishers()
 
   image_transport::ImageTransport it(nh_);
   camera_view_image_publisher_ = it.advertise("/rviz/view_image", 1);
+
+  // HiraiKyo edited,
+  current_camera_position_publisher_ = nh_.advertise<view_controller_msgs::CameraPlacement>("/rviz/current_camera_position", 1);
 }
 
 void AnimatedViewController::initializeSubscribers()
@@ -477,7 +480,7 @@ void AnimatedViewController::handleMouseEvent(ViewportMouseEvent& event)
 
   if (moved)
   {
-    publishCameraPose();
+    // HiraiKyo: publishCameraPose();
     context_->queueRender();
   }
 }
@@ -802,9 +805,9 @@ void AnimatedViewController::update(float dt, float ros_dt)
     // This needs to happen so that the camera orientation will update properly when fixed_up_property == false
     camera_->setFixedYawAxis(true, reference_orientation_ * up_vector_property_->getVector());
     camera_->setDirection(reference_orientation_ * (focus_point_property_->getVector() - eye_point_property_->getVector()));
-
-    publishCameraPose();
     
+    // HiraiKyo: publishCameraPose(); 
+
     if(publish_view_images_property_->getBool())
       publishViewImage();
 
@@ -820,6 +823,7 @@ void AnimatedViewController::update(float dt, float ros_dt)
     }
   }
   updateCamera();
+  publishCameraPose(); // HiraiKyo: CameraPoseのPublishをここに移動
   updateWindowSizeProperties();
 }
 
