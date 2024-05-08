@@ -499,9 +499,8 @@ void AnimatedViewController::publishCameraPose()
 
   // HiraiKyo: CameraPlacementとしてPublishする
   view_controller_msgs::CameraPlacement cp;
-  
-  cp.interaction_disabled = mouse_enabled_property_->getBool();
-  cp.allow_free_yaw_axis = fixed_up_property_->getBool();
+  cp.interaction_disabled = !mouse_enabled_property_->getBool();
+  cp.allow_free_yaw_axis = !fixed_up_property_->getBool();
 
   std::string name = interaction_mode_property_->getStdString();
   if(name == MODE_ORBIT) cp.mouse_interaction_mode = cp.ORBIT;
