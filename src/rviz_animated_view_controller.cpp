@@ -181,8 +181,8 @@ void AnimatedViewController::initializePublishers()
   image_transport::ImageTransport it(nh_);
   camera_view_image_publisher_ = it.advertise("/rviz/view_image", 1);
 
-  // HiraiKyo edited,
-  current_camera_position_publisher_ = nh_.advertise<view_controller_msgs::CameraPlacement>("/rviz/current_camera_position", 1);
+  // HiraiKyo: added
+  current_camera_placement_publisher_ = nh_.advertise<view_controller_msgs::CameraPlacement>("/rviz/current_camera_placement", 1);
 }
 
 void AnimatedViewController::initializeSubscribers()
@@ -496,6 +496,30 @@ void AnimatedViewController::publishCameraPose()
   cam_pose.orientation.y = camera_->getOrientation().y;
   cam_pose.orientation.z = camera_->getOrientation().z;
   current_camera_pose_publisher_.publish(cam_pose);
+
+  // HiraiKyo: CameraPlacementとしてPublishする
+  view_controller_msgs::CameraPlacement cp;
+  
+  cp.interaction_disabled = mouse_enabled_property_->getBool();
+  cp.allow_free_yaw_axis = fixed_up_property_->getBool();
+
+  std::string name = interaction_mode_property_->getStdString();
+  if(name == MODE_ORBIT) cp.mouse_interaction_mode = cp.ORBIT;
+  else if(name == MODE_FPS) cp.mouse_interaction_mode = cp.FPS;
+
+  cp.target_frame = attached_frame_property_->getStdString();
+
+  cp.eye.point.x = eye_point_property_->getVector().x;
+  cp.eye.point.y = eye_point_property_->getVector().y;
+  cp.eye.point.z = eye_point_property_->getVector().z;
+  cp.focus.point.x = focus_point_property_->getVector().x;
+  cp.focus.point.y = focus_point_property_->getVector().y;
+  cp.focus.point.z = focus_point_property_->getVector().z;
+  cp.up.vector.x = up_vector_property_->getVector().x;
+  cp.up.vector.y = up_vector_property_->getVector().y;
+  cp.up.vector.z = up_vector_property_->getVector().z;
+
+  current_camera_placement_publisher_.publish(cp);
 }
 
 //void AnimatedViewController::setUpVectorPropertyModeDependent( const Ogre::Vector3 &vector )

@@ -377,7 +377,7 @@ protected:    //members
 
   ros::Publisher current_camera_pose_publisher_;
   ros::Publisher finished_animation_publisher_;
-  ros::Publisher current_camera_position_publisher_;
+  ros::Publisher current_camera_placement_publisher_;
   image_transport::Publisher camera_view_image_publisher_;
 
   bool render_frame_by_frame_;
